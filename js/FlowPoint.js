@@ -1,93 +1,125 @@
 /**
  * Created by mupengfei on 2014/8/27.
  */
+/**
+ *  pNo : 节点编号
+ *  pName : 节点名称(用于显示在节点左侧)
+ *  pSta : 1 已结束  2  正在进行  3  尚未开始
+ *  isVisit : 1 允许  2 不允许
+ *
+ * srcArr数组单个对象结构
+ * eg: [{pNo:'1',pName:'第一节点',pSta:1,isVisit:1},{pNo:'2',pName:'第二节点',pSta:2,isVisit:1},{pNo:'3',pName:'第三节点',pSta:3,isVisit:2}]
+ */
 var FlowPoint = function () {
 
 }
-FlowPoint.init = function (srcArr) {
-    var sc = document.getElementById('stepsChart');
-    if (!sc) {
+FlowPoint.init = function (srcArr, varFun) {
+    var _sc = document.getElementById('stepsChart');
+    if (!_sc) {
         alert('id为stepsChart的div木有找到~');
         return;
     }
-//        for(var i=1;i<srcArr.length;i++){
-//        }
-    alert(FlowPoint._getDivHeight(sc));
-    FlowPoint._init();
+    var _Point_Length_ = FlowPoint._getPointHeight(_sc,srcArr.length);
+    _sc.appendChild(FlowPoint._createPoint(srcArr[0], _Point_Length_, varFun));
+        for(var i=1;i<srcArr.length;i++){
+            _sc.appendChild(FlowPoint._createNode(srcArr[i], _Point_Length_, varFun));
+        }
+//    alert(srcArr.length);
+//    FlowPoint._init();
 }
 
 FlowPoint._getDivHeight = function (tar) {
     return tar.offsetHeight;
 }
 
-FlowPoint._createNode = function (text) {
+FlowPoint._getPointHeight = function (tar, num) {
+    var _chartHeight = FlowPoint._getDivHeight(tar) * 0.9;
+    var _pointHeight = (_chartHeight / ((num - 1) * 3 + 1)).toFixed(0) ;
+    _pointHeight = _pointHeight > 64 ? 64 : (_pointHeight < 24 ? 24 : _pointHeight);
+    return  _pointHeight;
+}
+
+FlowPoint._createPoint = function (point, _pointHeight, varFun) {
     var div = document.createElement('div');
     div.style.position = 'relative';
     div.style.width = '100%';
-    div.style.height = '160px';
-    var imgJ = document.createElement('img');
-    imgJ.src = 'img/GRAY_HAND.png';
-    imgJ.id = 'imgJ';
-    imgJ.style.width = '20px';
-    imgJ.style.height = '80px';
-    imgJ.style.position = 'absolute';
-    imgJ.style.left = '50px';
-    imgJ.style.top = '0px';
+    div.style.height = _pointHeight + 'px';
+    var redHand = document.createElement('img');
+    redHand.id = 'RedHand' + point.pNo;
+    redHand.src = 'img/RED_HAND.png';
+    redHand.className = 'RedHandClass';
+    redHand.style.width = '20px';
+    redHand.style.height = _pointHeight + 'px';
+    redHand.style.position = 'absolute';
+    redHand.style.left = '0px';
+    redHand.style.visibility = 'hidden';
     var img = document.createElement('img');
-    img.src = 'img/GRAY_BLANK.png';
-    img.id = 'img2';
-    img.style.width = '80px';
-    img.style.height = '80px';
+    if(point.pSta == 1){
+        img.src = 'img/GREEN_SOLID.png';
+    } else if (point.pSta == 2){
+        img.src = 'img/GREEN_BLANK.png';
+    } else if (point.pSta == 3){
+        img.src = 'img/GRAY_BLANK.png';
+    }
+    img.style.width = _pointHeight + 'px';
+    img.style.height = _pointHeight + 'px';
     img.style.position = 'absolute';
     img.style.left = '20px';
-    img.style.top = '80px';
-    var p = document.createElement('font');
-    p.style.left = '100px';
-    p.style.top = '110px';
-    p.style.color = 'green';
-    p.style.position = 'absolute';
-    p.innerText = text;
-    div.appendChild(imgJ);
+    img.onclick = (function(event){
+        debugger;
+        var img = event.currentTarget;
+        var pNo = img.getAttribute('pNo');
+        var eleArr = document.getElementsByClassName('RedHandClass');
+        for (ele in eleArr){
+            if(eleArr[ele].id == 'RedHand' + pNo)
+                eleArr[ele].style.visibility = 'visible';
+            else
+                eleArr[ele].style.visibility = 'hidden';
+        }
+//        var redEle = document.getElementById('RedHand' + pNo);
+//        if(redEle)
+//            redEle.style.visibility = 'visible';
+        varFun(pNo);
+    });
+    img.setAttribute('pNo', point.pNo);
+    img.setAttribute('redId', 'RedHand' + point.pNo);
+    var fo = document.createElement('font');
+    fo.style.color = point.pSta == 3 ? 'gray' :'green';
+    fo.innerText = point.pName;
+    fo.style.position = 'absolute';
+    fo.style.left = (20 + parseInt(_pointHeight)) + 'px';
+    fo.style.top = (_pointHeight / 2 - 10) + 'px';
+    fo.style.fontWeight = 'bold';
+    div.appendChild(redHand);
     div.appendChild(img);
-    div.appendChild(p);
+    div.appendChild(fo);
     return div;
 }
 
-FlowPoint._init = function (text) {
-    var sc = document.getElementById('stepsChart');
-    console.log(sc.style.height);
+FlowPoint._createNode = function (point, _pointHeight, varFun) {
     var div = document.createElement('div');
     div.style.position = 'relative';
     div.style.width = '100%';
-    div.style.height = '80px';
-    var img = document.createElement('img');
-    img.src = 'img/GREEN_SOLID.png';
-    img.id = 'green';
-    img.style.width = '80px';
-    img.style.height = '80px';
-    img.style.position = 'absolute';
-    img.style.left = '20px';
-    //            var imgJ = document.createElement('img');
-    //            imgJ.src = 'jiantou.jpg';
-    //            imgJ.id = 'imgJ';
-    //            imgJ.style.width = '20px';
-    //            imgJ.style.height = '80px';
-    //            imgJ.style.position = 'absolute';
-    //            imgJ.style.left = '50px';
-    //            imgJ.style.top = '80px';
-    //            var img2 = document.createElement('img');
-    //            img2.src = 'green.jpg';
-    //            img2.id = 'img2';
-    //            img2.style.width = '80px';
-    //            img2.style.height = '80px';
-    //            img2.style.position = 'absolute';
-    //            img2.style.left = '20px';
-    div.appendChild(img);
-    sc.appendChild(div);
-    //            sc.appendChild(imgJ);
-    //            img2.style.top = '160px' ;
-    //            sc.appendChild(img2);
-    sc.appendChild(FlowPoint._createNode('第一节点'));
-    sc.appendChild(FlowPoint._createNode('第二节点'));
-    sc.appendChild(FlowPoint._createNode('第三节点'));
+    div.style.height = (parseInt(_pointHeight > 45 ? 100 : 50) + parseInt(_pointHeight)) + 'px';
+    var divIn = document.createElement('div');
+    divIn.style.position = 'relative';
+    divIn.style.width = '100%';
+    divIn.style.height = _pointHeight > 45 ? '100px' : '50px';
+    var imgJ = document.createElement('img');
+    imgJ.src = point.pSta == 3 ? 'img/GRAY_HAND.png' : 'img/GREEN_HAND.png';
+    imgJ.id = 'imgJ';
+    imgJ.style.width = '20px';
+    imgJ.style.height = _pointHeight > 45 ? '100px' : '50px';
+    imgJ.style.position = 'relative';
+    imgJ.style.left = (10 + parseInt(_pointHeight) / 2) + 'px';
+    imgJ.style.top = '0px';
+    divIn.appendChild(imgJ);
+    div.appendChild(divIn);
+    var _pDiv = FlowPoint._createPoint(point, _pointHeight, varFun);
+    _pDiv.style.left = '0px';
+    _pDiv.style.top = '0px';
+    _pDiv.style.margin = '0';
+    _pDiv.style.padding = '0';
+    div.appendChild(_pDiv);
+    return div;
 }
