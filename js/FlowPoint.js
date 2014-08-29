@@ -6,6 +6,7 @@
  *  pName : 节点名称(用于显示在节点左侧)
  *  pSta : 1 已结束  2  正在进行  3  尚未开始
  *  isVisit : 1 允许  2 不允许
+ *  isHand : 1 指向  2 不指向
  *
  * srcArr数组单个对象结构
  * eg: [{pNo:'1',pName:'第一节点',pSta:1,isVisit:1},{pNo:'2',pName:'第二节点',pSta:2,isVisit:1},{pNo:'3',pName:'第三节点',pSta:3,isVisit:2}]
@@ -52,7 +53,7 @@ FlowPoint._createPoint = function (point, _pointHeight, varFun) {
     redHand.style.height = _pointHeight + 'px';
     redHand.style.position = 'absolute';
     redHand.style.left = '0px';
-    redHand.style.visibility = 'hidden';
+    redHand.style.visibility = point.isHand == 1 ? 'visible' : 'hidden';
     var img = document.createElement('img');
     if(point.pSta == 1){
         img.src = 'img/GREEN_SOLID.png';
