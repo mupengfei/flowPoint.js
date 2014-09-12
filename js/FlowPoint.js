@@ -4,12 +4,12 @@
 /**
  *  pNo : 节点编号
  *  pName : 节点名称(用于显示在节点左侧)
- *  pSta : 1 已结束  2  正在进行  3  尚未开始
+ *  pSta : 2 已结束  1  正在进行  0  尚未开始
  *  isVisit : 1 允许  2 不允许
  *  isHand : 1 指向  2 不指向
  *
  * srcArr数组单个对象结构
- * eg: [{pNo:'1',pName:'第一节点',pSta:1,isVisit:1},{pNo:'2',pName:'第二节点',pSta:2,isVisit:1},{pNo:'3',pName:'第三节点',pSta:3,isVisit:2}]
+ * eg: [{pNo:'1',pName:'第一节点',pSta:2,isVisit:1},{pNo:'2',pName:'第二节点',pSta:1,isVisit:1},{pNo:'3',pName:'第三节点',pSta:0,isVisit:2}]
  */
 var FlowPoint = function () {
 
@@ -55,11 +55,11 @@ FlowPoint._createPoint = function (point, _pointHeight, varFun) {
     redHand.style.left = '0px';
     redHand.style.visibility = point.isHand == 1 ? 'visible' : 'hidden';
     var img = document.createElement('img');
-    if(point.pSta == 1){
+    if(point.pSta == 2){
         img.src = 'img/GREEN_SOLID.png';
-    } else if (point.pSta == 2){
+    } else if (point.pSta == 1){
         img.src = 'img/GREEN_BLANK.png';
-    } else if (point.pSta == 3){
+    } else if (point.pSta == 0){
         img.src = 'img/GRAY_BLANK.png';
     }
     img.style.width = _pointHeight + 'px';
@@ -85,7 +85,7 @@ FlowPoint._createPoint = function (point, _pointHeight, varFun) {
     img.setAttribute('pNo', point.pNo);
     img.setAttribute('redId', 'RedHand' + point.pNo);
     var fo = document.createElement('font');
-    fo.style.color = point.pSta == 3 ? 'gray' :'green';
+    fo.style.color = point.pSta == 0 ? 'gray' :'green';
     fo.innerText = point.pName;
     fo.style.position = 'absolute';
     fo.style.left = (20 + parseInt(_pointHeight)) + 'px';
@@ -107,7 +107,7 @@ FlowPoint._createNode = function (point, _pointHeight, varFun) {
     divIn.style.width = '100%';
     divIn.style.height = _pointHeight > 45 ? '100px' : '50px';
     var imgJ = document.createElement('img');
-    imgJ.src = point.pSta == 3 ? 'img/GRAY_HAND.png' : 'img/GREEN_HAND.png';
+    imgJ.src = point.pSta == 0 ? 'img/GRAY_HAND.png' : 'img/GREEN_HAND.png';
     imgJ.id = 'imgJ';
     imgJ.style.width = '20px';
     imgJ.style.height = _pointHeight > 45 ? '100px' : '50px';
