@@ -66,16 +66,18 @@ FlowPoint._createPoint = function (point, _pointHeight, varFun) {
     img.style.height = _pointHeight + 'px';
     img.style.position = 'absolute';
     img.style.left = '20px';
-    img.onclick = (function(event){
+    img.onclick = (function(e){
         debugger;
-        var img = event.currentTarget;
+        var e = e || event;
+        var img = e.srcElement ? e.srcElement : e.target;
+        //        var img = e.currentTarget;
         var pNo = img.getAttribute('pNo');
-        var eleArr = document.getElementsByClassName('RedHandClass');
-        for (ele in eleArr){
-            if(eleArr[ele].id == 'RedHand' + pNo)
-                eleArr[ele].style.visibility = 'visible';
+        var eleArr = document.getElementsByClassName ? document.getElementsByClassName('RedHandClass') : FlowPoint._getElementsByClassName('RedHandClass');
+        for (var i = 0;i < eleArr.length;i++) {
+            if(eleArr[i].id == 'RedHand' + pNo)
+                eleArr[i].style.visibility = 'visible';
             else
-                eleArr[ele].style.visibility = 'hidden';
+                eleArr[i].style.visibility = 'hidden';
         }
 //        var redEle = document.getElementById('RedHand' + pNo);
 //        if(redEle)
@@ -123,4 +125,28 @@ FlowPoint._createNode = function (point, _pointHeight, varFun) {
     _pDiv.style.padding = '0';
     div.appendChild(_pDiv);
     return div;
+}
+
+FlowPoint._getElementsByClassName = function (className,root,tagName) {    //root：父节点，tagName：该节点的标签名。 这两个参数均可有可无
+    if(root){
+        root=typeof root=="string" ? document.getElementById(root) : root;
+    }else{
+        root=document.body;
+    }
+    tagName=tagName||"*";
+    if (document.getElementsByClassName) {                    //如果浏览器支持getElementsByClassName，就直接的用
+        return root.getElementsByClassName(className);
+    }else {
+        var tag= root.getElementsByTagName(tagName);    //获取指定元素
+        var tagAll = [];                                    //用于存储符合条件的元素
+        for (var i = 0; i < tag.length; i++) {                //遍历获得的元素
+            for(var j=0,n=tag[i].className.split(' ');j<n.length;j++){    //遍历此元素中所有class的值，如果包含指定的类名，就赋值给tagnameAll
+                if(n[j]==className){
+                    tagAll.push(tag[i]);
+                    break;
+                }
+            }
+        }
+        return tagAll;
+    }
 }
